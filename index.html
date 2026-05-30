@@ -17,6 +17,9 @@
       --panel: #ffffff;
       --paper: #f8fafc;
       --accent: #0891b2;
+      --hero-overlay: linear-gradient(180deg, rgba(2, 8, 23, 0.2) 0%, rgba(2, 8, 23, 0.78) 100%);
+      --hero-height-desktop: min(88svh, 860px);
+      --hero-height-mobile: min(80svh, 560px);
     }
     * { box-sizing: border-box; }
     body {
@@ -26,13 +29,13 @@
       background: var(--paper);
     }
     header {
-      min-height: 92svh;
-      display: grid;
-      align-items: end;
+      min-height: var(--hero-height-desktop);
+      height: var(--hero-height-desktop);
       background: #0f172a;
       border-bottom: 1px solid var(--line);
       position: relative;
       overflow: hidden;
+      padding: 0;
     }
     .hero-media {
       position: absolute;
@@ -40,46 +43,87 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 28%;
+      object-position: 50% 34%;
       z-index: 0;
+      transform: scale(1.01);
+      filter: saturate(1.06) contrast(1.06) brightness(0.78);
     }
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(2, 8, 23, 0.25), rgba(2, 8, 23, 0.58));
+      background: var(--hero-overlay);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .hero-backdrop {
+      position: absolute;
+      inset: 0;
       z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(125% 95% at 88% 30%, rgba(8, 145, 178, 0.34), transparent 50%),
+        radial-gradient(90% 88% at 12% 84%, rgba(59, 130, 246, 0.26), transparent 62%);
+    }
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 0;
+      pointer-events: none;
+    }
+    .hero-copy,
+    .language-switcher {
+      pointer-events: auto;
+      position: relative;
+    }
+    .hero-copy,
+    .language-switcher {
+      padding-right: 24px;
+      padding-left: 24px;
     }
     .language-switcher {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      left: auto;
+      margin: 14px 14px 0 auto;
       display: flex;
       justify-content: flex-end;
       gap: 8px;
       flex-wrap: wrap;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.42);
+      backdrop-filter: blur(5px);
+      padding: 8px;
+      width: fit-content;
       z-index: 3;
     }
     .language-switcher button {
-      border: 1px solid rgba(255, 255, 255, 0.48);
+      border: 1px solid rgba(255, 255, 255, 0.52);
       border-radius: 999px;
       background: rgba(15, 23, 42, 0.72);
       color: white;
       min-height: 36px;
-      padding: 6px 11px;
+      padding: 5px 10px;
       font: inherit;
       cursor: pointer;
+      transition: transform 0.16s ease, background 0.2s ease, border-color 0.2s ease;
+      font-size: 0.88rem;
     }
     .language-switcher button[aria-pressed="true"] {
       background: #ffffff;
       color: var(--ink);
       border-color: #ffffff;
     }
+    .language-switcher button:hover {
+      transform: translateY(-1px);
+    }
     .hero-copy {
       max-width: 1120px;
       width: 100%;
       margin: 0 auto;
-      padding: 42svh 24px 54px;
+      padding-top: 0;
+      padding-bottom: 24px;
+      text-wrap: balance;
       position: relative;
       z-index: 2;
     }
@@ -92,13 +136,16 @@
       text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
     }
     .tagline {
-      margin: 18px 0 0;
+      margin: 16px 0 0;
       max-width: 720px;
       font-size: clamp(1.05rem, 2vw, 1.4rem);
       line-height: 1.45;
       color: #e5eef7;
       background: rgba(8, 15, 26, 0.72);
       display: inline-block;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
       padding: 8px 10px;
     }
     nav {
@@ -108,6 +155,7 @@
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
+      align-items: center;
     }
     nav a {
       color: var(--ink);
@@ -187,10 +235,14 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       overflow: hidden;
+      box-shadow: 0 8px 22px rgba(2, 8, 23, 0.06);
     }
     .visual-grid img {
       display: block;
       width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      object-position: center;
       height: auto;
       background: #020617;
     }
@@ -252,15 +304,31 @@
       text-align: center;
     }
     @media (max-width: 760px) {
-      header { min-height: 86svh; }
-      .hero-media { object-position: 49% 30%; }
-      .language-switcher {
-        position: static;
-        justify-content: flex-start;
-        padding: 12px 16px 0;
+      header {
+        min-height: var(--hero-height-mobile);
+        height: var(--hero-height-mobile);
       }
-      .language-switcher button { min-height: 34px; padding: 5px 9px; }
-      .hero-copy { padding: 34svh 16px 34px; }
+      .hero-media {
+        object-position: 50% 30%;
+      }
+      .language-switcher {
+        justify-content: flex-start;
+        margin: 10px auto 0 10px;
+        width: calc(100% - 20px);
+      }
+      .language-switcher button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+      }
+      .hero-copy,
+      .language-switcher {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .hero-copy {
+        padding-bottom: 18px;
+      }
+      h1 { font-size: clamp(2rem, 11vw, 3.2rem); }
       .tagline { max-width: 100%; }
       main, nav { padding-left: 16px; padding-right: 16px; }
       .grid, .deploy-grid, .visual-grid { grid-template-columns: 1fr; }
@@ -269,25 +337,29 @@
 </head>
 <body>
   <header>
-    <img id="hero-image" class="hero-media" src="assets/localized/omnidoer-readme-en.jpg" alt="OmniDoer visual banner">
+    <img id="hero-image" class="hero-media" src="assets/localized/omnidoer-readme-en.jpg" alt="OmniDoer visual banner" data-i18n-alt="hero_alt">
+    <div class="hero-backdrop" aria-hidden="true"></div>
     <div class="hero-overlay" aria-hidden="true"></div>
-    <div class="language-switcher" aria-label="Language">
-      <button type="button" data-lang="en" aria-pressed="true">English</button>
-      <button type="button" data-lang="zh-CN" aria-pressed="false">中文</button>
-      <button type="button" data-lang="es" aria-pressed="false">Español</button>
-      <button type="button" data-lang="fr" aria-pressed="false">Français</button>
-      <button type="button" data-lang="de" aria-pressed="false">Deutsch</button>
-      <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
-      <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
-    </div>
-    <div class="hero-copy">
-      <h1>OmniDoer</h1>
-      <p class="tagline" data-i18n="hero_tagline">All-purpose web action on the user's own server: Codex plans with GPT strengths, while secrets stay behind Broker/Vault boundaries and sensitive flows are handed to the human in a secure stream.</p>
+    <div class="hero-content">
+      <div class="language-switcher" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">English</button>
+        <button type="button" data-lang="zh-CN" aria-pressed="false">中文</button>
+        <button type="button" data-lang="es" aria-pressed="false">Español</button>
+        <button type="button" data-lang="fr" aria-pressed="false">Français</button>
+        <button type="button" data-lang="de" aria-pressed="false">Deutsch</button>
+        <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+        <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
+      </div>
+      <div class="hero-copy">
+        <h1>OmniDoer</h1>
+        <p class="tagline" data-i18n="hero_tagline">All-purpose web action on the user's own server: Codex plans with GPT strengths, while secrets stay behind Broker/Vault boundaries and sensitive flows are handed to the human in a secure stream.</p>
+      </div>
     </div>
   </header>
   <nav aria-label="Primary">
-    <a href="https://github.com/OmniDoer/omnidoer" data-i18n="nav_github">GitHub</a>
+    <a href="https://github.com/omnidoer/omnidoer" data-i18n="nav_github">GitHub</a>
     <a href="#install" data-i18n="nav_install">Install</a>
+    <a href="#pages" data-i18n="nav_pages">GitHub Pages</a>
     <a href="#technical-proof" data-i18n="nav_proof">Technical Proof</a>
     <a href="control-service-cloud.md" data-i18n="nav_cloud">Cloud Direct</a>
     <a href="control-client.md" data-i18n="nav_control">Control Client</a>
@@ -359,11 +431,11 @@
       <div class="deploy-grid">
         <article class="command-panel">
           <h3 data-i18n="install_local_title">Local Developer Runtime</h3>
-          <pre><code>curl -fsSL https://raw.githubusercontent.com/OmniDoer/omnidoer/main/omnidoer/scripts/install-cloud-direct.sh | sh</code></pre>
+          <pre><code>curl -fsSL https://raw.githubusercontent.com/omnidoer/omnidoer/main/omnidoer/scripts/install-cloud-direct.sh | sh</code></pre>
         </article>
         <article class="command-panel">
           <h3 data-i18n="install_cloud_title">Cloud Direct Server</h3>
-          <pre><code>curl -fsSL https://raw.githubusercontent.com/OmniDoer/omnidoer/main/omnidoer/scripts/install-cloud-direct.sh | \
+          <pre><code>curl -fsSL https://raw.githubusercontent.com/omnidoer/omnidoer/main/omnidoer/scripts/install-cloud-direct.sh | \
   OMNIDOER_CLOUD_DIRECT=1 OMNIDOER_PUBLIC_URL=https://agent.example.com sh</code></pre>
         </article>
       </div>
@@ -373,6 +445,20 @@
 ~/omnidoer/.venv/bin/omnidoer control submit-task "Open the local demo and download my invoice"</code></pre>
       </article>
       <p class="install-note" data-i18n="install_note">Set <code>OMNIDOER_INSTALL_DIR</code>, <code>OMNIDOER_HOST</code>, <code>OMNIDOER_PORT</code>, <code>OMNIDOER_START=0</code>, <code>OMNIDOER_REGISTER_MCP=0</code>, or <code>OMNIDOER_SKIP_PLAYWRIGHT=1</code> to customize the bootstrap.</p>
+    </section>
+    <section id="pages">
+      <h2 data-i18n="pages_heading">GitHub Pages Quick Deploy</h2>
+      <p data-i18n="pages_copy">Publish and preview the landing page from one machine in two quick commands.</p>
+      <div class="deploy-grid">
+        <article class="command-panel">
+          <h3 data-i18n="pages_preview_title">Preview</h3>
+          <pre><code data-i18n="pages_preview_command">python3 -m http.server 4173</code></pre>
+        </article>
+        <article class="command-panel">
+          <h3 data-i18n="pages_publish_title">Publish</h3>
+          <pre><code data-i18n="pages_publish_command">git add index.html assets && git commit -m "Update landing page" && git push</code></pre>
+        </article>
+      </div>
     </section>
 
     <section>
@@ -404,19 +490,19 @@
       <p data-i18n="visuals_copy">OmniDoer is built around a real controlled browser, cloud control service, user handoff, policy approvals, and audit evidence rather than a browser-only demo.</p>
       <div class="visual-grid">
         <figure>
-          <img src="assets/omnidoer-human-loop-web-agent.jpg" alt="OmniDoer human-in-the-loop web agent pipeline">
+          <img data-visual-id="human-loop" data-i18n-alt="visual_human_alt" src="assets/omnidoer-human-loop-web-agent.jpg">
           <figcaption data-i18n="visual_human_caption">Human-in-the-loop web action with challenge relay, approval gates, and takeover.</figcaption>
         </figure>
         <figure>
-          <img src="assets/omnidoer-cloud-control-service.jpg" alt="OmniDoer cloud control service architecture">
+          <img data-visual-id="cloud-service" data-i18n-alt="visual_cloud_alt" src="assets/omnidoer-cloud-control-service.jpg">
           <figcaption data-i18n="visual_cloud_caption">Cloud Direct control service for paired devices, sessions, broker, vault, and browser control.</figcaption>
         </figure>
         <figure>
-          <img src="assets/omnidoer-feature-matrix.jpg" alt="OmniDoer feature matrix across browser, vault, control, and audit">
+          <img data-visual-id="feature-matrix" data-i18n-alt="visual_matrix_alt" src="assets/omnidoer-feature-matrix.jpg">
           <figcaption data-i18n="visual_matrix_caption">Feature matrix covering browser actions, secret handling, approvals, registration handoff, and audit.</figcaption>
         </figure>
         <figure>
-          <img src="assets/omnidoer-omni-action-poster.jpg" alt="OmniDoer omni action poster">
+          <img data-visual-id="action-poster" data-i18n-alt="visual_action_alt" src="assets/omnidoer-omni-action-poster.jpg">
           <figcaption data-i18n="visual_action_caption">Omni action positioning for authorized signup, login, forms, downloads, purchases, and user takeover.</figcaption>
         </figure>
       </div>
@@ -433,10 +519,55 @@
       "ja": "assets/localized/omnidoer-readme-ja.jpg",
       "ko": "assets/localized/omnidoer-readme-ko.jpg"
     };
+    const visualImageByLang = {
+      "en": {
+        "human-loop": "assets/omnidoer-human-loop-web-agent.jpg",
+        "cloud-service": "assets/omnidoer-cloud-control-service.jpg",
+        "feature-matrix": "assets/omnidoer-feature-matrix.jpg",
+        "action-poster": "assets/omnidoer-omni-action-poster.jpg"
+      },
+      "zh-CN": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-zh-CN.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-zh-CN.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-zh-CN.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-zh-CN.jpg"
+      },
+      "es": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-es.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-es.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-es.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-es.jpg"
+      },
+      "fr": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-fr.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-fr.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-fr.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-fr.jpg"
+      },
+      "de": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-de.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-de.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-de.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-de.jpg"
+      },
+      "ja": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-ja.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-ja.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-ja.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-ja.jpg"
+      },
+      "ko": {
+        "human-loop": "assets/localized/omnidoer-human-loop-web-agent-ko.jpg",
+        "cloud-service": "assets/localized/omnidoer-cloud-control-service-ko.jpg",
+        "feature-matrix": "assets/localized/omnidoer-feature-matrix-ko.jpg",
+        "action-poster": "assets/localized/omnidoer-omni-action-poster-ko.jpg"
+      }
+    };
     const copy = {
       "en": {
+        hero_alt: "OmniDoer hero banner",
         hero_tagline: "All-purpose web action on the user's own server: Codex plans with GPT strengths, while secrets stay behind Broker/Vault boundaries and sensitive flows are handed to the human in a secure stream.",
-        nav_github: "GitHub", nav_install: "Install", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "Security Model", nav_tools: "MCP Tools",
+        nav_github: "GitHub", nav_install: "Install", nav_pages: "GitHub Pages", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "Security Model", nav_tools: "MCP Tools",
         secrets_heading: "Secrets Stay Out Of The Model",
         secrets_copy: "The agent may request an action. The broker checks the origin. The vault uses the secret. The browser receives the credential. The model never does.",
         card_codex_title: "Codex Preserved", card_codex_copy: "OmniDoer keeps Codex as the model and billing entrypoint, then runs execution tools on the user's server through MCP.",
@@ -450,9 +581,13 @@
         blueprint_runtime_caption: "The public Control Service runs on the user's Linux server while MCP, Browser, Broker, Vault, Policy, and Audit stay inside the server boundary.",
         visuals_heading: "Agent Runtime Visuals", visuals_copy: "OmniDoer is built around a real controlled browser, cloud control service, user handoff, policy approvals, and audit evidence rather than a browser-only demo.",
         visual_human_caption: "Human-in-the-loop web action with challenge relay, approval gates, and seamless takeover streaming.",
+        visual_human_alt: "Human-in-the-loop web agent pipeline with secure challenge relay and approval flow",
         visual_cloud_caption: "Cloud Direct control service for paired devices, sessions, broker, vault, and browser control.",
+        visual_cloud_alt: "Cloud Direct control service architecture with paired devices, sessions, broker, vault, and browser control",
         visual_matrix_caption: "Feature matrix covering browser actions, secret handling, approvals, registration handoff, and audit.",
+        visual_matrix_alt: "Feature matrix for browser actions, secret handling, approvals, registration handoff, and audit",
         visual_action_caption: "Omni action positioning for authorized signup, login, forms, downloads, purchases, and user takeover.",
+        visual_action_alt: "Omni action scenarios for signup, login, forms, downloads, purchases, and user takeover",
         beyond_heading: "Beyond Automation-First Agents",
         beyond_copy: "OpenClaw and similar macro systems can execute UI steps, but they stall at anti-bot, registration, and payment gates. OmniDoer keeps Codex as the reasoning layer, adds secure execution on the user server, and hands trust-critical steps to the human without bypassing defenses.",
         beyond_security: "Secure boundary: secrets and challenge materials stay in the encrypted Broker/Vault path, not model context.",
@@ -478,11 +613,18 @@
         install_after_title: "Pair And Submit",
         install_after_commands: "~/omnidoer/.venv/bin/omnidoer control pair --print-qr\n~/omnidoer/.venv/bin/omnidoer control submit-task \"Open the local demo and download my invoice\"",
         install_note: "Set <code>OMNIDOER_INSTALL_DIR</code>, <code>OMNIDOER_HOST</code>, <code>OMNIDOER_PORT</code>, <code>OMNIDOER_START=0</code>, <code>OMNIDOER_REGISTER_MCP=0</code>, or <code>OMNIDOER_SKIP_PLAYWRIGHT=1</code> to customize the bootstrap.",
+        pages_heading: "GitHub Pages Quick Deploy",
+        pages_copy: "Publish and preview the landing page from one machine in two quick commands.",
+        pages_preview_title: "Preview",
+        pages_preview_command: "python3 -m http.server 4173",
+        pages_publish_title: "Publish",
+        pages_publish_command: "git add index.html assets && git commit -m \"Update landing page\" && git push",
         footer_copy: "OmniDoer is a user-authorized local execution layer, not a credential stealer, CAPTCHA bypasser, or autonomous spender."
       },
       "zh-CN": {
+        hero_alt: "OmniDoer 主视觉横幅",
         hero_tagline: "安全边界内的全能网页行动。Codex CLI 的 MCP/sidecar 安全执行层，secret 留在 Broker、Vault 和用户控制的 Control Client 内，反爬、注册、支付环节由用户确认。",
-        nav_github: "GitHub", nav_install: "安装", nav_cloud: "Cloud Direct", nav_control: "控制客户端", nav_security: "安全模型", nav_tools: "MCP 工具",
+        nav_github: "GitHub", nav_install: "安装", nav_pages: "GitHub Pages", nav_cloud: "Cloud Direct", nav_control: "控制客户端", nav_security: "安全模型", nav_tools: "MCP 工具",
         secrets_heading: "Secret 不进入模型上下文",
         secrets_copy: "Agent 可以请求行动；Broker 校验来源；Vault 使用 secret；浏览器接收凭据；模型永远只看到脱敏状态。",
         card_codex_title: "保留 Codex", card_codex_copy: "OmniDoer 通过 MCP 扩展 Codex CLI，不创建默认 OpenAI API 客户端，也不改变计费路径。",
@@ -496,9 +638,13 @@
         blueprint_runtime_caption: "公开 Control Service 运行在用户的 Linux 服务器上，MCP、Browser、Broker、Vault、Policy 和 Audit 留在服务器边界内。",
         visuals_heading: "Agent 运行时视觉", visuals_copy: "OmniDoer 面向真实受控浏览器、云控制服务、用户接管、策略审批和审计证据，而不是浏览器演示玩具。",
         visual_human_caption: "带 Challenge Relay、Approval Gate 和 Takeover 的人在回路网页行动。",
+        visual_human_alt: "带有人机协作、挑战中继、审批和接管流转的网页行动流程图",
         visual_cloud_caption: "Cloud Direct 控制服务管理配对设备、会话、Broker、Vault 和浏览器控制。",
+        visual_cloud_alt: "展示配对设备、会话、Broker、Vault 与浏览器控制的 Cloud Direct 服务架构",
         visual_matrix_caption: "覆盖浏览器行动、secret 处理、审批、注册接管和审计的功能矩阵。",
+        visual_matrix_alt: "覆盖浏览器动作、secret 管理、审批、注册接管和审计流程的功能矩阵",
         visual_action_caption: "用于授权注册、登录、表单、下载、购买和用户接管的全能行动定位。",
+        visual_action_alt: "用于注册、登录、表单、下载、购买和用户接管的 OmniDoer 场景图",
         beyond_heading: "超越自动化优先的代理",
         beyond_copy: "OpenClaw 这类浏览器宏擅长执行点击流程，但在反爬、注册、支付这类信任关卡会停滞。OmniDoer 保留 Codex 的推理能力，在用户服务器提供安全执行面，并把关键人机环节通过同一配对会话流式交给用户完成。",
         beyond_security: "安全边界前置：密码、挑战答案不进入模型上下文。",
@@ -524,9 +670,16 @@
         install_after_title: "配对并提交任务",
         install_after_commands: "~/omnidoer/.venv/bin/omnidoer control pair --print-qr\n~/omnidoer/.venv/bin/omnidoer control submit-task \"打开本地 demo 并下载我的发票\"",
         install_note: "可设置 <code>OMNIDOER_INSTALL_DIR</code>、<code>OMNIDOER_HOST</code>、<code>OMNIDOER_PORT</code>、<code>OMNIDOER_START=0</code>、<code>OMNIDOER_REGISTER_MCP=0</code> 或 <code>OMNIDOER_SKIP_PLAYWRIGHT=1</code> 来调整安装流程。",
+        pages_heading: "GitHub Pages 一键发布",
+        pages_copy: "本页部署可用两条命令在一台机器上完成预览与发布。",
+        pages_preview_title: "本地预览",
+        pages_preview_command: "python3 -m http.server 4173",
+        pages_publish_title: "发布",
+        pages_publish_command: "git add index.html assets && git commit -m \"Update landing page\" && git push",
         footer_copy: "OmniDoer 是用户授权的本地执行层，不是窃取凭据、绕过 CAPTCHA 或自主消费的工具。"
       },
       "es": {
+        hero_alt: "Banner principal de OmniDoer",
         hero_tagline: "Acción web de propósito general dentro del límite de seguridad. Un sidecar MCP para Codex CLI donde los secretos permanecen en Broker, Vault y Control Client.",
         nav_github: "GitHub", nav_install: "Instalar", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "Modelo de seguridad", nav_tools: "Herramientas MCP",
         secrets_heading: "Los secretos no entran al modelo", secrets_copy: "El agente solicita una acción; el Broker valida el origen; Vault usa el secreto; el navegador recibe la credencial; el modelo no.",
@@ -540,9 +693,13 @@
         blueprint_runtime_caption: "El Control Service público corre en el servidor Linux del usuario; MCP, Browser, Broker, Vault, Policy y Audit quedan dentro.",
         visuals_heading: "Visuales del runtime", visuals_copy: "OmniDoer usa navegador controlado real, servicio cloud, handoff de usuario, aprobaciones y auditoría.",
         visual_human_caption: "Acción web con humano en el circuito, Challenge Relay, Approval Gate y takeover.",
+        visual_human_alt: "Flujo web con agente en el circuito humano para relé de desafíos, aprobación y takeover",
         visual_cloud_caption: "Servicio Cloud Direct para dispositivos, sesiones, Broker, Vault y control del navegador.",
+        visual_cloud_alt: "Arquitectura del servicio Cloud Direct con dispositivos emparejados, sesiones, Broker, Vault y control del navegador",
         visual_matrix_caption: "Matriz de funciones para acciones web, secretos, aprobaciones, registro y auditoría.",
+        visual_matrix_alt: "Matriz de funciones para acciones del navegador, gestión de secretos, aprobaciones, traspaso de registro y auditoría",
         visual_action_caption: "Posicionamiento para registro, login, formularios, descargas, compras y takeover autorizados.",
+        visual_action_alt: "Escenarios de acción de OmniDoer para registro, login, formularios, descargas, compras y takeover autorizado",
         beyond_heading: "Más allá de la automatización",
         beyond_copy: "OpenClaw y macros similares pueden ejecutar pasos UI, pero se detienen en CAPTCHA, verificación anti-bot y pagos; OmniDoer combina planificación Codex con ejecución segura y delega los pasos críticos al usuario.",
         beyond_security: "No se mueve ningún secreto al contexto del modelo.",
@@ -571,6 +728,7 @@
         footer_copy: "OmniDoer es una capa de ejecución autorizada por el usuario, no una herramienta para robar credenciales, evadir CAPTCHA o gastar sola."
       },
       "fr": {
+        hero_alt: "Bannière principale d'OmniDoer",
         hero_tagline: "Action web polyvalente dans la limite de sécurité. Un sidecar MCP pour Codex CLI où les secrets restent dans Broker, Vault et Control Client.",
         nav_github: "GitHub", nav_install: "Installer", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "Modèle de sécurité", nav_tools: "Outils MCP",
         secrets_heading: "Les secrets restent hors du modèle", secrets_copy: "L'agent demande une action; le Broker vérifie l'origine; Vault utilise le secret; le navigateur reçoit l'identifiant; le modèle jamais.",
@@ -584,9 +742,13 @@
         blueprint_runtime_caption: "Le Control Service public tourne sur le serveur Linux de l'utilisateur; MCP, Browser, Broker, Vault, Policy et Audit restent dedans.",
         visuals_heading: "Visuels du runtime", visuals_copy: "OmniDoer repose sur un vrai navigateur contrôlé, le cloud, le handoff utilisateur, les approbations et l'audit.",
         visual_human_caption: "Action web avec humain dans la boucle, Challenge Relay, Approval Gate et takeover.",
+        visual_human_alt: "Workflow web avec agent en circuit humain : relais de challenge, validation et takeover",
         visual_cloud_caption: "Service Cloud Direct pour appareils, sessions, Broker, Vault et contrôle navigateur.",
+        visual_cloud_alt: "Architecture du service Cloud Direct avec appareils appairés, sessions, Broker, Vault et contrôle navigateur",
         visual_matrix_caption: "Matrice des actions navigateur, secrets, approbations, inscription et audit.",
+        visual_matrix_alt: "Matrice des fonctions pour les actions web, la gestion des secrets, les approbations, le transfert d'inscription et l'audit",
         visual_action_caption: "Positionnement pour inscription, connexion, formulaires, téléchargements, achats et takeover autorisés.",
+        visual_action_alt: "Scénarios d'action OmniDoer pour inscription, connexion, formulaires, téléchargements, achats et takeover autorisé",
         beyond_heading: "Au-delà des agents automatisés",
         beyond_copy: "Les macros type OpenClaw exécutent des pas UI, mais bloquent sur CAPTCHA/anti-bot et paiements; OmniDoer combine la planification Codex avec une exécution sécurisée et passe les étapes critiques à l'utilisateur.",
         beyond_security: "Les secrets ne quittent jamais le contexte modèle.",
@@ -615,6 +777,7 @@
         footer_copy: "OmniDoer est une couche d'exécution autorisée par l'utilisateur, pas un voleur d'identifiants, un contournement CAPTCHA ou un dépensier autonome."
       },
       "de": {
+        hero_alt: "OmniDoer Titelbild",
         hero_tagline: "Allzweck-Webaktionen innerhalb der Sicherheitsgrenze. Ein MCP-Sidecar für Codex CLI, bei dem Secrets in Broker, Vault und Control Client bleiben.",
         nav_github: "GitHub", nav_install: "Installieren", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "Sicherheitsmodell", nav_tools: "MCP-Tools",
         secrets_heading: "Geheimnisse bleiben aus dem Modell", secrets_copy: "Der Agent fordert eine Aktion an; der Broker prüft den Ursprung; Vault nutzt das Secret; der Browser erhält die Anmeldedaten; das Modell nie.",
@@ -628,9 +791,13 @@
         blueprint_runtime_caption: "Der öffentliche Control Service läuft auf dem Linux-Server des Nutzers; MCP, Browser, Broker, Vault, Policy und Audit bleiben innen.",
         visuals_heading: "Runtime-Visuals", visuals_copy: "OmniDoer nutzt echten kontrollierten Browser, Cloud-Service, Nutzer-Handoff, Freigaben und Audit-Nachweise.",
         visual_human_caption: "Webaktion mit Mensch in der Schleife, Challenge Relay, Approval Gate und Takeover.",
+        visual_human_alt: "Webaktion mit menschlicher Rückkopplung: Challenge Relay, Freigaben und Takeover",
         visual_cloud_caption: "Cloud-Direct-Service für Geräte, Sitzungen, Broker, Vault und Browsersteuerung.",
+        visual_cloud_alt: "Cloud-Direct-Architektur mit gepaarten Geräten, Sitzungen, Broker, Vault und Browsersteuerung",
         visual_matrix_caption: "Funktionsmatrix für Browseraktionen, Secrets, Freigaben, Registrierung und Audit.",
+        visual_matrix_alt: "Funktionsmatrix für Browseraktionen, Secret-Verwaltung, Freigaben, Registrierungsübergabe und Audit",
         visual_action_caption: "Positionierung für autorisierte Registrierung, Login, Formulare, Downloads, Käufe und Takeover.",
+        visual_action_alt: "OmniDoer-Szenarien für Anmeldung, Login, Formulare, Downloads, Käufe und Benutzer-Takeover",
         beyond_heading: "Über die Automatisierungsgrenzen hinaus",
         beyond_copy: "Makro-basierte Automation kann UI-Schritte ausführen, aber bei CAPTCHA/Anti-Bot und Zahlungen zu stoppen; OmniDoer kombiniert Codex-Planung mit sicherem Lauf und übergibt kritische Schritte an den Nutzer.",
         beyond_security: "Secrets bleiben vor dem Modell verborgen.",
@@ -659,6 +826,7 @@
         footer_copy: "OmniDoer ist eine vom Nutzer autorisierte Ausführungsschicht, kein Credential-Stealer, CAPTCHA-Bypass oder autonomer Käufer."
       },
       "ja": {
+        hero_alt: "OmniDoer メインビジュアル",
         hero_tagline: "安全境界内の全能 Web アクション。Codex CLI 向け MCP sidecar として、secret を Broker、Vault、Control Client に閉じ込めたまま Web 操作を行います。",
         nav_github: "GitHub", nav_install: "インストール", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "セキュリティモデル", nav_tools: "MCP ツール",
         secrets_heading: "Secret はモデルに渡さない", secrets_copy: "Agent は操作を要求し、Broker が origin を検証し、Vault が secret を使い、ブラウザだけが資格情報を受け取ります。",
@@ -672,9 +840,13 @@
         blueprint_runtime_caption: "公開 Control Service はユーザーの Linux サーバーで動き、MCP、Browser、Broker、Vault、Policy、Audit は内部に残ります。",
         visuals_heading: "Agent Runtime ビジュアル", visuals_copy: "OmniDoer は実ブラウザ、クラウド制御、ユーザー接管、承認、監査証跡を中心に作られています。",
         visual_human_caption: "Challenge Relay、Approval Gate、Takeover を持つ human-in-the-loop Web 操作。",
+        visual_human_alt: "人間を含むループでの Web 操作、チャレンジ中継、承認、Takeover を示す構成図",
         visual_cloud_caption: "ペアリング端末、session、Broker、Vault、ブラウザ制御の Cloud Direct サービス。",
+        visual_cloud_alt: "ペアリング端末、セッション、Broker、Vault、ブラウザ制御を備えた Cloud Direct サービスアーキテクチャ",
         visual_matrix_caption: "ブラウザ操作、secret、承認、登録ハンドオフ、監査の機能マトリクス。",
+        visual_matrix_alt: "ブラウザ操作、secret 処理、承認、登録ハンドオフ、監査を網羅する機能マトリクス",
         visual_action_caption: "許可された登録、ログイン、フォーム、ダウンロード、購入、ユーザー接管の位置づけ。",
+        visual_action_alt: "登録、ログイン、フォーム、ダウンロード、購入、ユーザーTakeoverを扱う OmniDoer のユースケース",
         beyond_heading: "自動化優先エージェントを超えて",
         beyond_copy: "OpenClaw 等のマクロはクリック操作は得意だが、CAPTCHA/anti-bot や決済で停止する。OmniDoer は Codex の推論と安全実行面を組み合わせ、重要ステップはユーザーに手渡す。",
         beyond_security: "シークレットはモデルのコンテキストへ入らない。",
@@ -703,6 +875,7 @@
         footer_copy: "OmniDoer はユーザー承認のローカル実行層であり、資格情報窃取、CAPTCHA 回避、自律支払いの道具ではありません。"
       },
       "ko": {
+        hero_alt: "OmniDoer 핵심 비주얼",
         hero_tagline: "보안 경계 안의 전방위 웹 액션. Codex CLI용 MCP sidecar로, secret은 Broker, Vault, Control Client 안에 둔 채 웹 작업을 수행합니다.",
         nav_github: "GitHub", nav_install: "설치", nav_cloud: "Cloud Direct", nav_control: "Control Client", nav_security: "보안 모델", nav_tools: "MCP 도구",
         secrets_heading: "Secret은 모델로 가지 않습니다", secrets_copy: "Agent는 작업을 요청하고, Broker가 origin을 확인하고, Vault가 secret을 사용하며, 브라우저만 자격 증명을 받습니다.",
@@ -716,9 +889,13 @@
         blueprint_runtime_caption: "공개 Control Service는 사용자의 Linux 서버에서 실행되고 MCP, Browser, Broker, Vault, Policy, Audit은 내부에 남습니다.",
         visuals_heading: "Agent Runtime 시각 자료", visuals_copy: "OmniDoer는 실제 제어 브라우저, 클라우드 제어, 사용자 핸드오프, 승인, 감사 증거를 중심으로 합니다.",
         visual_human_caption: "Challenge Relay, Approval Gate, Takeover가 있는 human-in-the-loop 웹 작업.",
+        visual_human_alt: "인간 개입 루프 기반 웹 작업, 챌린지 릴레이, 승인 및 Takeover 흐름",
         visual_cloud_caption: "페어링 장치, 세션, Broker, Vault, 브라우저 제어를 위한 Cloud Direct 서비스.",
+        visual_cloud_alt: "페어링 장치, 세션, Broker, Vault, 브라우저 제어를 포함한 Cloud Direct 서비스 아키텍처",
         visual_matrix_caption: "브라우저 작업, secret 처리, 승인, 등록 핸드오프, 감사를 다루는 기능 매트릭스.",
+        visual_matrix_alt: "브라우저 동작, secret 처리, 승인, 등록 핸드오프, 감사 프로세스를 정리한 기능 매트릭스",
         visual_action_caption: "허가된 가입, 로그인, 폼, 다운로드, 구매, 사용자 Takeover를 위한 포지셔닝.",
+        visual_action_alt: "가입, 로그인, 폼 제출, 다운로드, 결제, 사용자 Takeover를 다루는 OmniDoer 시나리오",
         beyond_heading: "자동화 우선 에이전트 초월",
         beyond_copy: "OpenClaw류 매크로는 클릭 동작은 잘 처리하지만 CAPTCHA/anti-bot, 결제 구간에서 중단된다. OmniDoer는 Codex 계획력에 안전 실행 면을 결합해 핵심 단계는 사용자에게 넘긴다.",
         beyond_security: "비밀값은 절대 모델 컨텍스트로 전송되지 않는다.",
@@ -786,18 +963,47 @@
       }
       return "en";
     }
+    function setLocalizedImage(img, primary, fallback) {
+      if (!img || !primary) {
+        return;
+      }
+      img.src = primary;
+      img.dataset.fallbackSrc = fallback || "";
+      img.onerror = () => {
+        if (img.dataset.fallbackSrc) {
+          img.src = img.dataset.fallbackSrc;
+          img.dataset.fallbackSrc = "";
+        }
+      };
+    }
     function applyLanguage(lang) {
       const selected = normalizeLanguage(lang);
       const active = copy[selected];
       document.documentElement.lang = selected;
       const heroImage = document.getElementById("hero-image");
       const heroImageSource = heroImageByLang[selected] || heroImageByLang.en;
+      const heroAlt = active.hero_alt || copy.en.hero_alt;
+      const visualImageMap = visualImageByLang[selected] || visualImageByLang.en || {};
       if (heroImage && heroImageSource) {
-        heroImage.src = heroImageSource;
+        setLocalizedImage(heroImage, heroImageSource, heroImageByLang.en);
+        heroImage.setAttribute("alt", heroAlt || "OmniDoer");
       }
       document.querySelectorAll("[data-i18n]").forEach((node) => {
         const value = active[node.dataset.i18n] || copy.en[node.dataset.i18n];
         if (value) node.innerHTML = value;
+      });
+      document.querySelectorAll("[data-i18n-alt]").forEach((node) => {
+        const altValue = active[node.dataset.i18nAlt] || copy.en[node.dataset.i18nAlt];
+        if (altValue) {
+          node.setAttribute("alt", altValue);
+        }
+      });
+      document.querySelectorAll("img[data-visual-id]").forEach((node) => {
+        const visualId = node.dataset.visualId;
+        const visualImageSource = visualImageMap[visualId] || visualImageByLang.en[visualId];
+        if (visualImageSource) {
+          setLocalizedImage(node, visualImageSource, visualImageByLang.en[visualId]);
+        }
       });
       document.querySelectorAll("[data-lang]").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.lang === selected));
