@@ -1,0 +1,70 @@
+# Cloud Control Service
+
+OmniDoer Cloud Direct Mode assumes the Linux Agent runs on a user-controlled
+cloud server or VPS. Android, Windows, and PWA Control Clients connect directly
+to that server over HTTPS/WSS. OmniDoer does not use a third-party relay,
+Telegram, OpenAI, or any SaaS service as the control transport.
+
+```text
+Control Client
+  <-> HTTPS/WSS
+OmniDoer Control Service on the user's cloud server
+  <-> local process / localhost / future Unix socket
+Secret Broker / Challenge Relay / Human Takeover Relay / Browser Controller
+  <-> Vault / headless Chromium / Agent runtime
+```
+
+Codex CLI still talks to OmniDoer through a local MCP stdio process. The MCP
+server, Vault, Broker, and browser internals are not public interfaces and
+should not be exposed to the internet.
+
+Local Dev Mode is restricted to loopback and is the only mode where protected
+Control APIs may be used without pairing. LAN Mode and Cloud Direct Mode both
+require pairing, device identity, session auth, request/device scoping,
+CSRF/origin checks, and rate limiting for mutating APIs. Cloud Direct Mode adds
+explicit `--cloud-direct`, HTTPS public URL, and public-server transport
+requirements. Secrets and challenge answers are encrypted in the Control Client
+before submission. TLS protects transport, but Secret Broker and Challenge
+Relay E2EE remain the sensitive-data boundary.
+
+When TLS is terminated by Nginx, Caddy, Traefik, or another reverse proxy, the
+proxy must forward `X-Forwarded-Proto: https` or `Forwarded: proto=https`.
+OmniDoer checks that marker before pairing or serving authenticated Control API
+requests in `--behind-reverse-proxy` mode. This prevents direct HTTP access to
+the backend listener from acting as a Cloud Direct control path.
+
+After pairing, protected Control Service APIs require both the httpOnly session
+cookie and a request signature from the paired device private key. The signature
+binds device id, session id, HTTP method, path, timestamp, and nonce; nonces are
+single-use to reject replay. Mutating requests also require the CSRF header.
+Device and session revocation APIs use the same mutating-request protections,
+and revoking a device also revokes its active sessions.
+
+Requests may be scoped to a specific paired `device_id`. In Cloud Direct Mode,
+devices only see and act on requests assigned to them, plus unassigned requests
+intended for any paired device. This lets high-risk approvals or takeover
+sessions be pinned to the user's phone or another trusted client.
+
+Request push uses WSS when available and a signed HTTPS event stream as a
+compatibility fallback. Browser WebSocket connections cannot attach custom
+headers, so the PWA authenticates `/api/ws/requests` with the httpOnly session
+cookie plus a nonce-bound device signature in `Sec-WebSocket-Protocol`. The SSE
+fallback opens `/api/events?stream=1` with `fetch()` so it can attach the same
+device-signature headers; plain `EventSource` is intentionally avoided because
+browsers do not allow custom authentication headers there. Each streamed
+snapshot is filtered by the authenticated device session before it leaves the
+Control Service.
+
+The QR pairing URL includes a short-lived `code` and opaque `pairing_id`. Before
+the user confirms pairing, the PWA can fetch public pairing metadata by
+`pairing_id` so the screen shows the server URL, broker fingerprint, web broker
+fingerprint, and expiry. That metadata endpoint does not return the pairing
+code, code hash, session token, device private key, secret payload, challenge
+answer, or vault data.
+
+If a website requires account registration before the Agent can continue, the
+Control Service uses Registration Handoff rather than model-driven signup. The
+cloud browser remains the real website session; the Control Client receives the
+browser stream and sends user input events back to that session. The Agent is
+paused until the user releases control, and registration secrets, verification
+answers, and CAPTCHA/passkey interactions are not available to MCP or Codex.
