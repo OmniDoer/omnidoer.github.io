@@ -103,6 +103,42 @@ OmniDoer 不只是“做完任务”。
 
 OmniDoer 做的不是假装这些差异不存在，而是把差异逐个暴露出来、修掉、验证，并写进故事。
 
+## 第五件事：服务在新机器上重新有了呼吸
+
+跨发行版适配完成后，OmniDoer 没有只看 `systemctl start` 的返回值。
+
+它做了一次更接近真实切换前的验证：
+
+- Flask/Gunicorn 在新机 `3552` 上返回 200。
+- nginx 在新机 `80/443` 上接住了 `482692.xyz` 的 HTTPS 请求。
+- OmniDoer Control Client 在新机 `8787` 上返回控制端页面。
+- Hysteria2 在 UDP `8444` 上启动，stats 只监听本机 `7654`。
+- SOCKS5 代理在 `1080` 上启动，并能通过代理访问外网。
+- Postfix/Dovecot 的邮件端口恢复，Dovecot 用迁移过来的邮箱密码完成认证测试。
+- GitHub listener 做了 dry-run，确认配置能读、任务能跑、不会把 token 暴露到输出。
+- Vault 里出现了新服务器 SSH 凭证，Control Client 的设备和会话状态也被同步到新机。
+
+然后它又做了一次最终增量同步。
+
+这次同步不再是“把旧机器整块复制过去”那么粗糙。新机的 Control Service 已经成为 systemd 服务，所以 OmniDoer 先停掉新机的 `8787`，同步旧机最新的 `/root/.omnidoer`，再重启新机服务，让运行时状态重新由新机写入。
+
+同步之后，新机没有 failed units，核心端口都在监听，HTTP、邮件、SOCKS、GitHub listener 和 Control API 重新通过。
+
+但这里仍然有一个现实边界：
+
+`482692.xyz` 的 DNS 还指向旧服务器 `45.196.97.75`。  
+新服务器 `152.32.233.23` 已经准备好接流量，但公共入口还没有切过去。
+
+这不是代码问题，也不是服务器问题。
+
+域名的 NS 是 `dnsowl.com`，当前服务器的 Vault 里没有 DNS 后台凭证。要完成最后切换，需要在 DNS 面板里把 `482692.xyz` 的 A 记录改到 `152.32.233.23`，或者再通过 OmniDoer Control Client 把 DNS 后台凭证交给 Vault，让 agent 继续完成这一步。
+
+所以这一天的迁移状态不是“完全切走”，而是：
+
+新机已完成热备和验证。  
+旧机仍承接公共 DNS。  
+最后的开关，停在 DNS 面板上。
+
 ## 接下来的迁移标准
 
 这次搬家不能只看“能启动”。
