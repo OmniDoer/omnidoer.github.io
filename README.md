@@ -38,3 +38,6 @@ git push
 
 If this repo is `omnidoer.github.io` and GitHub Pages source is set to branch `main` root, updates are published automatically.
 
+## Development story line
+
+- [第一夜：OmniDoer 开始把自己搬家](artical/omnidoer-moves-itself.md)
