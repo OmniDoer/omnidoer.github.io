@@ -245,6 +245,46 @@
       gap: 16px;
       margin-top: 20px;
     }
+    .story-feature {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      margin-top: 18px;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f0f9ff, #ffffff);
+      padding: 18px;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+    }
+    .story-feature strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+      color: #164e63;
+    }
+    .story-feature p {
+      margin: 0;
+      max-width: none;
+      font-size: 0.98rem;
+    }
+    .story-feature a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border: 1px solid #0f172a;
+      border-radius: 999px;
+      background: #111827;
+      color: white;
+      padding: 9px 14px;
+      font-weight: 750;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .story-feature a:hover {
+      background: #0f172a;
+    }
     .campaign-card {
       position: relative;
       min-height: 280px;
@@ -346,8 +386,9 @@
       .hero-install { max-width: 100%; }
       .hero-install pre { font-size: 0.86rem; }
       main, nav { padding-left: 16px; padding-right: 16px; }
-      .grid, .deploy-grid, .visual-grid, .campaign-grid { grid-template-columns: 1fr; }
+      .grid, .deploy-grid, .visual-grid, .campaign-grid, .story-feature { grid-template-columns: 1fr; }
       .campaign-card, .campaign-card img { min-height: 240px; }
+      .story-feature a { width: 100%; }
     }
   </style>
 </head>
@@ -422,7 +463,13 @@ omnidoer pair</code></pre>
     <section id="campaign">
       <h2 data-i18n="campaign_heading">From Security Finding To Safer Agents</h2>
       <p data-i18n="campaign_copy">OmniDoer starts from a concrete white-hat finding: telling an agent not to read secrets is only a request. Real safety requires brokered credentials, vault custody, approval gates, and a boundary the model cannot cross.</p>
-      <p><a href="artical/omnidoer-moves-itself.md" data-i18n="campaign_story_link">Read the live development story: OmniDoer starts moving itself to a stronger server.</a></p>
+      <div class="story-feature">
+        <div>
+          <strong data-i18n="story_feature_title">Live story, redacted by design</strong>
+          <p data-i18n="story_feature_copy">OmniDoer started moving itself, then learned a new constraint: after only two days, weekly quota fell to 38%, and the system may need to hibernate.</p>
+        </div>
+        <a href="story.html" data-i18n="campaign_story_link">Read the public story</a>
+      </div>
       <div class="campaign-grid">
         <figure class="campaign-card">
           <img src="assets/omnidoer-secret-leak-risk.jpg" alt="" loading="lazy">
@@ -595,7 +642,9 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "Cost-aware autonomy: high-risk actions remain user-approved and always run under explicit billing and release control.",
         campaign_heading: "From Security Finding To Safer Agents",
         campaign_copy: "OmniDoer starts from a concrete white-hat finding: telling an agent not to read secrets is only a request. Real safety requires brokered credentials, vault custody, approval gates, and a boundary the model cannot cross.",
-        campaign_story_link: "Read the live development story: OmniDoer starts moving itself to a stronger server.",
+        story_feature_title: "Live story, redacted by design",
+        story_feature_copy: "OmniDoer started moving itself, then learned a new constraint: after only two days, weekly quota fell to 38%, and the system may need to hibernate.",
+        campaign_story_link: "Read the public story",
         campaign_finding_title: "The white-hat finding",
         campaign_finding_copy: "On a real server, an agent may be near passwords, SSH keys, API tokens, and wallet material. Prompt discipline is not isolation.",
         campaign_restraint_title: "Model self-restraint is not enough",
@@ -655,7 +704,9 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "成本与自治并重：高风险动作保持用户审批，支出与关键变更可追溯可控。",
         campaign_heading: "从白帽发现到安全智能体",
         campaign_copy: "OmniDoer 的故事起点很具体：要求模型“不要读取 secret”只是请求，不是隔离。真正的安全需要 Broker、Vault、审批门和模型无法跨越的执行边界。",
-        campaign_story_link: "阅读实时开发故事：OmniDoer 开始把自己搬到更强的服务器。",
+        story_feature_title: "实时故事，默认脱敏",
+        story_feature_copy: "OmniDoer 开始迁移自己，也学到新的约束：才过去两天，本周额度只剩 38%，系统可能需要进入休眠。",
+        campaign_story_link: "阅读公开故事",
         campaign_finding_title: "白帽发现",
         campaign_finding_copy: "在真实服务器上，Agent 可能靠近密码、SSH 私钥、API token 和钱包密钥。仅靠提示词自觉，不是安全边界。",
         campaign_restraint_title: "模型自觉不等于隔离",
@@ -713,7 +764,7 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "Pago con autonomía controlada: las acciones críticas requieren aprobación humana explícita.",
         campaign_heading: "Del hallazgo white-hat a agentes más seguros",
         campaign_copy: "OmniDoer nace de un hallazgo concreto: pedirle al modelo que no lea secretos es solo una petición. La seguridad real exige credenciales mediadas, custodia en Vault, aprobaciones y una frontera que el modelo no pueda cruzar.",
-        campaign_story_link: "Lee la historia de desarrollo: OmniDoer empieza a mudarse a un servidor más fuerte.",
+        campaign_story_link: "Lee la historia pública",
         campaign_finding_title: "El hallazgo white-hat",
         campaign_finding_copy: "En un servidor real, un agente puede estar cerca de contraseñas, claves SSH, tokens API y material de wallet. La disciplina de prompt no es aislamiento.",
         campaign_restraint_title: "La autocontención del modelo no basta",
@@ -771,7 +822,7 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "Coût contrôlé: les actions risquées exigent une approbation humaine explicite.",
         campaign_heading: "D'un constat white-hat à des agents plus sûrs",
         campaign_copy: "OmniDoer part d'un constat concret : demander au modèle de ne pas lire les secrets n'est qu'une consigne. La vraie sécurité exige Broker, Vault, approbations et une limite que le modèle ne peut pas franchir.",
-        campaign_story_link: "Lire le récit de développement : OmniDoer commence à migrer vers un serveur plus solide.",
+        campaign_story_link: "Lire le récit public",
         campaign_finding_title: "Le constat white-hat",
         campaign_finding_copy: "Sur un vrai serveur, un agent peut côtoyer mots de passe, clés SSH, tokens API et clés de wallet. La discipline du prompt n'est pas une isolation.",
         campaign_restraint_title: "L'autodiscipline du modèle ne suffit pas",
@@ -829,7 +880,7 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "Kostensensitives Vorgehen: risikobehaftete Aktionen brauchen explizite Nutzerfreigabe.",
         campaign_heading: "Vom White-Hat-Befund zu sichereren Agenten",
         campaign_copy: "OmniDoer beginnt mit einem konkreten Befund: Einem Modell zu sagen, es solle keine Secrets lesen, ist nur eine Bitte. Echte Sicherheit braucht Broker, Vault, Freigaben und eine Grenze, die das Modell nicht überschreiten kann.",
-        campaign_story_link: "Entwicklungsgeschichte lesen: OmniDoer zieht auf einen staerkeren Server um.",
+        campaign_story_link: "Oeffentliche Geschichte lesen",
         campaign_finding_title: "Der White-Hat-Befund",
         campaign_finding_copy: "Auf einem echten Server kann ein Agent nahe an Passwörtern, SSH-Schlüsseln, API-Tokens und Wallet-Material arbeiten. Prompt-Disziplin ist keine Isolation.",
         campaign_restraint_title: "Selbstbeschränkung des Modells reicht nicht",
@@ -887,7 +938,7 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "高リスクな支払い・変更操作はユーザー承認付きでのみ実行される。",
         campaign_heading: "ホワイトハットの発見から、より安全なエージェントへ",
         campaign_copy: "OmniDoer の出発点は具体的です。モデルに「secret を読まないで」と頼むだけでは境界になりません。本当の安全には Broker、Vault、承認ゲート、そしてモデルが越えられない実行境界が必要です。",
-        campaign_story_link: "開発ストーリーを読む: OmniDoer がより強いサーバーへ自分を移し始める。",
+        campaign_story_link: "公開ストーリーを読む",
         campaign_finding_title: "ホワイトハットの発見",
         campaign_finding_copy: "実サーバー上では、Agent がパスワード、SSH 鍵、API token、ウォレット素材の近くで動くことがあります。プロンプト上の自制は隔離ではありません。",
         campaign_restraint_title: "モデルの自制だけでは足りない",
@@ -945,7 +996,7 @@ omnidoer control submit-task "Open the local demo and download my invoice"</code
         beyond_payment: "고위험 지불/계정 변경은 사용자 승인 후에만 진행.",
         campaign_heading: "화이트햇 발견에서 더 안전한 에이전트로",
         campaign_copy: "OmniDoer의 출발점은 구체적입니다. 모델에게 secret을 읽지 말라고 요청하는 것은 경계가 아닙니다. 진짜 안전에는 Broker, Vault, 승인 게이트, 그리고 모델이 넘을 수 없는 실행 경계가 필요합니다.",
-        campaign_story_link: "개발 이야기 읽기: OmniDoer가 더 강한 서버로 스스로 이전을 시작합니다.",
+        campaign_story_link: "공개 스토리 읽기",
         campaign_finding_title: "화이트햇 발견",
         campaign_finding_copy: "실제 서버에서 Agent는 비밀번호, SSH 키, API 토큰, 지갑 키 가까이에서 실행될 수 있습니다. 프롬프트 규율은 격리가 아닙니다.",
         campaign_restraint_title: "모델의 자제만으로는 부족합니다",
